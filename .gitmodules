@@ -1,0 +1,3 @@
+[submodule "merkle-benchmark/solidity/lib/forge-std"]
+	path = merkle-benchmark/solidity/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
