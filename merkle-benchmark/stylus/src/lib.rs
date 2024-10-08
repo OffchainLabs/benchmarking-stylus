@@ -63,9 +63,4 @@ impl MerkleTreeContract {
         self.root.get()
     }
 
-    /// Clear the Merkle tree leaves
-    pub fn clear_tree(&mut self) {
-        for i in 0..self.leaves.len() as u32 {
-        }
-    }
 }
