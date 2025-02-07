@@ -34,7 +34,7 @@ Matrix multiplication is a computationally intensive operation, particularly for
 3. Run the tests:
 
 ```bash
-forge test
+    forge test
 ```
 These tests simulate matrix operations without EVM constraints, enabling the validation of larger matrices (e.g., 50x50).
 
@@ -49,11 +49,11 @@ These tests simulate matrix operations without EVM constraints, enabling the val
 2. Deploy the contract: Use the `forge create` command to deploy the `MatrixMultiplication` contract to the Sepolia testnet:
 
 ```bash
-forge create \
-  --rpc-url https://sepolia.infura.io/v3/<your-infura-project-id> \
-  --private-key <your-private-key> \
-  src/MatrixMultiplication.sol:MatrixMultiplication \
-  --broadcast
+    forge create \
+    --rpc-url https://sepolia.infura.io/v3/<your-infura-project-id> \
+    --private-key <your-private-key> \
+    src/MatrixMultiplication.sol:MatrixMultiplication \
+    --broadcast
 ```
 
 Explanation of flags:
@@ -67,7 +67,7 @@ Explanation of flags:
 3. Grab the deployed contract address: After deployment, Foundry will output the contract address. For example:
 
 ```bash
-Deployed contract to: 0x52258Bb3C17fAe945a3cbA4a56ceBE8807ef8F9D
+    Deployed contract to: 0x52258Bb3C17fAe945a3cbA4a56ceBE8807ef8F9D
 ```
 
 4. Add the address to the `MatrixMultiplyEVM.t.sol` file: Update your test file (test/MatrixMultiplicationTest.t.sol) to use the deployed contract address. 
@@ -75,5 +75,5 @@ Deployed contract to: 0x52258Bb3C17fAe945a3cbA4a56ceBE8807ef8F9D
 5. Run Tests on Sepolia: 
 
 ```bash
-forge test --rpc-url https://sepolia.infura.io/v3/<your-infura-project-id>
+    forge test --rpc-url https://sepolia.infura.io/v3/<your-infura-project-id>
 ```
