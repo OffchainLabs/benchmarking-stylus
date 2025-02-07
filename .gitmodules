@@ -1,0 +1,3 @@
+[submodule "matrix_multiplication/solidity-matrix-multiplication/lib/forge-std"]
+	path = matrix_multiplication/solidity-matrix-multiplication/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
