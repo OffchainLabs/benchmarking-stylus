@@ -61,8 +61,11 @@ These tests simulate matrix operations without EVM constraints, enabling the val
 Explanation of flags:
 
 `--rpc-url`: The RPC URL for the Ethereum network (e.g., Sepolia).
+
 `--private-key`: The private key of the deploying account. Note: Ensure this key is secured and not exposed.
+
 `<contract-path>:<contract-name>`: Specifies the contract's source file and contract name (e.g., src/MatrixMultiplication.sol:MatrixMultiplication).
+
 `--broadcast`: Broadcasts the transaction to the network.
 
 
@@ -73,9 +76,8 @@ Explanation of flags:
 ```
 
 4. Sending matrix transactions: Once the contract is deployed, use `matrix_tx_sender.sh` to:
-
-1. Generate matrices
-2. Send transactions to the deployed contract
+- Generate matrices
+- Send transactions to the deployed contract
 
 ### Setup
 
