@@ -1,12 +1,12 @@
 [package]
-name = "stylus-hello-world"
+name = "stylus-matrix-multiplication"
 version = "0.1.10"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-homepage = "https://github.com/OffchainLabs/stylus-hello-world"
-repository = "https://github.com/OffchainLabs/stylus-hello-world"
+homepage = "https://github.com/OffchainLabs/benchmarking-stylus/tree/main/matrix_multiplication/stylus-matrix-multiplication"
+repository = "https://github.com/OffchainLabs/benchmarking-stylus/tree/main/matrix_multiplication/stylus-matrix-multiplication"
 keywords = ["arbitrum", "ethereum", "stylus", "alloy"]
-description = "Stylus hello world example"
+description = "stylus-matrix-multiplication"
 
 [dependencies]
 alloy-primitives = "=0.8.14"
@@ -26,7 +26,7 @@ export-abi = ["stylus-sdk/export-abi"]
 debug = ["stylus-sdk/debug"]
 
 [[bin]]
-name = "stylus-hello-world"
+name = "stylus-matrix-multiplication"
 path = "src/main.rs"
 
 [lib]

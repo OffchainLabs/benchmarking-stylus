@@ -4,16 +4,16 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 interface IMatrixMultiplication {
     function multiply(
-        int256[][] memory A,
-        int256[][] memory B
-    ) external pure returns (int256[][] memory);
+        uint256[][] memory A,
+        uint256[][] memory B
+    ) external pure returns (uint256[][] memory);
 }
 
 contract MatrixMultiplyEVMTest is Test {
     IMatrixMultiplication matrix;
 
     address constant MATRIX_CONTRACT_ADDRESS =
-        0x52258Bb3C17fAe945a3cbA4a56ceBE8807ef8F9D; // Replace with your deployed contract address
+        0x8dc4287894e7dbBb3550aE3DfFAdC0901E79fDF5; // Replace with your deployed contract address
 
     function setUp() public {
         // Set the deployed contract address
@@ -22,29 +22,29 @@ contract MatrixMultiplyEVMTest is Test {
 
     /// @notice Test for 5x5 matrix multiplication
     function testMatrixMultiply5x5() view public {
-        int256[][] memory A = new int256[][](5);
+        uint256[][] memory A = new uint256[][](5);
         for (uint256 i = 0; i < 5; i++) {
-            A[i] = new int256[](5);
+            A[i] = new uint256[](5);
         }
-        int256[][] memory B = new int256[][](5);
+        uint256[][] memory B = new uint256[][](5);
         for (uint256 i = 0; i < 5; i++) {
-            B[i] = new int256[](5);
+            B[i] = new uint256[](5);
         }
 
         for (uint256 i = 0; i < 5; i++) {
             for (uint256 j = 0; j < 5; j++) {
-                A[i][j] = int256(i + j); // Larger values to increase computation
-                B[i][j] = int256(i - j); // Larger values to increase computation
+                A[i][j] = uint256(i + j); // Larger values to increase computation
+                B[i][j] = uint256(i + j + 1); // Larger values to increase computation
             }
         }
 
         // Perform the multiplication
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
         // Compute expected values dynamically
         for (uint256 i = 0; i < 5; i++) {
             for (uint256 j = 0; j < 5; j++) {
-                int256 expected = 0;
+                uint256 expected = 0;
                 for (uint256 k = 0; k < 5; k++) {
                     expected += A[i][k] * B[k][j];
                 }
@@ -55,66 +55,103 @@ contract MatrixMultiplyEVMTest is Test {
 
     /// @notice Test for 10x10 matrix multiplication
     function testMatrixMultiply10x10() view public {
-        int256[][] memory A = new int256[][](10);
+        uint256[][] memory A = new uint256[][](10);
         for (uint256 i = 0; i < 10; i++) {
-            A[i] = new int256[](10);
+            A[i] = new uint256[](10);
         }
-        int256[][] memory B = new int256[][](10);
+        uint256[][] memory B = new uint256[][](10);
         for (uint256 i = 0; i < 10; i++) {
-            B[i] = new int256[](10);
+            B[i] = new uint256[](10);
         }
 
         for (uint256 i = 0; i < 10; i++) {
             for (uint256 j = 0; j < 10; j++) {
-                A[i][j] = int256(i + j); // Larger values to increase computation
-                B[i][j] = int256(i - j); // Larger values to increase computation
+                A[i][j] = uint256(i + j); // Larger values to increase computation
+                B[i][j] = uint256(i + j + 1); // Larger values to increase computation
             }
         }
 
         // Perform the multiplication
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
-        // Validate the result matrix C
-        // Each element in the resulting matrix C should be the sum of 50 terms (1 * 1)
-        for (uint256 i = 0; i < 10; i++) {
-            for (uint256 j = 0; j < 10; j++) {
-                assertEq(C[i][j], 10); // Each cell in C should equal 50
+        // Compute expected values dynamically
+    for (uint256 i = 0; i < 10; i++) {
+        for (uint256 j = 0; j < 10; j++) {
+            uint256 expected = 0;
+            for (uint256 k = 0; k < 10; k++) {
+                expected += A[i][k] * B[k][j]; // Correctly sum up the expected value
             }
+            assertEq(C[i][j], expected, "Mismatch in 10x10 matrix multiplication");
         }
     }
+}
 
     /// @notice Test for 50x50 matrix multiplication
     function testMatrixMultiply50x50() public view {
         // Allocate and initialize a 50x50 matrix A
-        int256[][] memory A = new int256[][](50);
+        uint256[][] memory A = new uint256[][](50);
         for (uint256 i = 0; i < 50; i++) {
-            A[i] = new int256[](50);
+            A[i] = new uint256[](50);
         }
-        int256[][] memory B = new int256[][](50);
+        uint256[][] memory B = new uint256[][](50);
         for (uint256 i = 0; i < 50; i++) {
-            B[i] = new int256[](50);
+            B[i] = new uint256[](50);
         }
 
         for (uint256 i = 0; i < 50; i++) {
             for (uint256 j = 0; j < 50; j++) {
-                A[i][j] = int256(i + j); // Larger values to increase computation
-                B[i][j] = int256(i - j); // Larger values to increase computation
+                A[i][j] = uint256(i + j); // Larger values to increase computation
+                B[i][j] = uint256(i + j + 1); // Larger values to increase computation
             }
         }
 
         // Perform the multiplication
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
-        // Validate the result matrix C
-        // Each element in the resulting matrix C should be the sum of 50 terms (1 * 1)
-        for (uint256 i = 0; i < 50; i++) {
-            for (uint256 j = 0; j < 50; j++) {
-                assertEq(C[i][j], 50); // Each cell in C should equal 50
+            // Compute expected values dynamically
+    for (uint256 i = 0; i < 50; i++) {
+        for (uint256 j = 0; j < 50; j++) {
+            uint256 expected = 0;
+            for (uint256 k = 0; k < 50; k++) {
+                expected += A[i][k] * B[k][j]; // Correctly sum up the expected value
             }
+            assertEq(C[i][j], expected, "Mismatch in 10x10 matrix multiplication");
         }
     }
+}
+     /// @notice Test for 50x50 matrix multiplication
+    function testMatrixMultiply100x100() public view {
+        // Allocate and initialize a 50x50 matrix A
+        uint256[][] memory A = new uint256[][](100);
+        for (uint256 i = 0; i < 100; i++) {
+            A[i] = new uint256[](100);
+        }
+        uint256[][] memory B = new uint256[][](100);
+        for (uint256 i = 0; i < 100; i++) {
+            B[i] = new uint256[](100);
+        }
 
-    
+        for (uint256 i = 0; i < 100; i++) {
+            for (uint256 j = 0; j < 100; j++) {
+                A[i][j] = uint256(i + j); // Larger values to increase computation
+                B[i][j] = uint256(i + j + 1); // Larger values to increase computation
+            }
+        }
+
+        // Perform the multiplication
+        uint256[][] memory C = matrix.multiply(A, B);
+
+            // Compute expected values dynamically
+    for (uint256 i = 0; i < 100; i++) {
+        for (uint256 j = 0; j < 100; j++) {
+            uint256 expected = 0;
+            for (uint256 k = 0; k < 100; k++) {
+                expected += A[i][k] * B[k][j]; // Correctly sum up the expected value
+            }
+            assertEq(C[i][j], expected, "Mismatch in 10x10 matrix multiplication");
+        }
+    }
+}
 
     
 }

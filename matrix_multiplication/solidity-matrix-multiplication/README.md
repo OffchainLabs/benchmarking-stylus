@@ -5,11 +5,11 @@ This repository demonstrates matrix multiplication in Solidity, including compre
 
 ## Overview
 
-Matrix multiplication is a computationally intensive operation, particularly for large matrices. This project includes a Solidity implementation of matrix multiplication and tests for both:
+Matrix multiplication is a computationally intensive operation, especially on-chain. This project includes:
 
-1. **Local Simulation Tests** (using Foundry without computation or gas constraints).
-2. **On-Chain Tests** (deployed to Ethereum Sepolia to validate real-world behavior).
-
+1. **A Solidity implementation of matrix multiplication.**
+2. **Foundry tests for local and on-chain validation.**
+3. **A transaction sender script (`matrix_tx_sender.sh`) to generate matrices and interact with the deployed contract.**
 
 ## Prerequisites
 
@@ -17,7 +17,9 @@ Matrix multiplication is a computationally intensive operation, particularly for
 
 2. Setup Infura or Another RPC Provider: Create an Infura project (or use an alternative RPC provider) to get an RPC URL for the Sepolia testnet.
 
-## Local Testing
+3. jq: A lightweight JSON parsing tool used to extract contract addresses from the script output. Install jq by following the [official installation guide](https://jqlang.org/download/) for your operating system.
+
+## Local Testing (Using Foundry)
 
 1. Clone the repository:
 
@@ -70,10 +72,30 @@ Explanation of flags:
     Deployed contract to: 0x52258Bb3C17fAe945a3cbA4a56ceBE8807ef8F9D
 ```
 
-4. Add the address to the `MatrixMultiplyEVM.t.sol` file: Update your test file (test/MatrixMultiplicationTest.t.sol) to use the deployed contract address. 
+4. Sending matrix transactions: Once the contract is deployed, use `matrix_tx_sender.sh` to:
 
-5. Run Tests on Sepolia: 
+1. Generate matrices
+2. Send transactions to the deployed contract
+
+### Setup
+
+1. Ensure the `.env` file exists in the root directory (outside the script folder) with the following values:
 
 ```bash
-    forge test --rpc-url https://sepolia.infura.io/v3/<your-infura-project-id>
+    PRIVATE_KEY=0xYourPrivateKeyHere
+    SEPOLIA_RPC=https://sepolia.infura.io/v3/<your-infura-project-id>
+    CONTRACT_ADDRESS=0x52258Bb3C17fAe945a3cbA4a56ceBE8807ef8F9D
 ```
+
+2. Run the script from the `script` folder:
+
+```bash
+    cd script
+    bash matrix_tx_sender.sh
+```
+
+#### What This Script Does
+
+✅ Generates JSON files representing random matrices.
+✅ Sends transactions to multiply matrices on-chain.
+✅ Automatically estimates gas and manages nonces.

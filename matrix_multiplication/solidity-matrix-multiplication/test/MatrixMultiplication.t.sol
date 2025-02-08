@@ -20,9 +20,9 @@ contract MatrixMultiplicationTest is Test {
     // Test 2x2 matrix multiplication
     function testMatrixMultiply2x2() public view {
         // Allocate and initialize a 2x2 matrix A
-        int256[][] memory A = new int256[][](2);
-        A[0] = new int256[](2);
-        A[1] = new int256[](2);
+        uint256[][] memory A = new uint256[][](2);
+        A[0] = new uint256[](2);
+        A[1] = new uint256[](2);
 
         A[0][0] = 2;
         A[0][1] = 0;
@@ -30,9 +30,9 @@ contract MatrixMultiplicationTest is Test {
         A[1][1] = 4;
 
         // Allocate and initialize a 2x2 matrix B
-        int256[][] memory B = new int256[][](2);
-        B[0] = new int256[](2);
-        B[1] = new int256[](2);
+        uint256[][] memory B = new uint256[][](2);
+        B[0] = new uint256[](2);
+        B[1] = new uint256[](2);
 
         B[0][0] = 2;
         B[0][1] = 0;
@@ -40,7 +40,7 @@ contract MatrixMultiplicationTest is Test {
         B[1][1] = 2;
 
         // Multiply matrices on-chain
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
         // Validate results
         assertEq(C[0][0], 4); // 2*2 + 0*1
@@ -51,10 +51,10 @@ contract MatrixMultiplicationTest is Test {
 
     function testMatrixMultiply3x3() public view {
         // Allocate and initialize a 3x3 matrix A
-        int256[][] memory A = new int256[][](3);
-        A[0] = new int256[](3);
-        A[1] = new int256[](3);
-        A[2] = new int256[](3);
+        uint256[][] memory A = new uint256[][](3);
+        A[0] = new uint256[](3);
+        A[1] = new uint256[](3);
+        A[2] = new uint256[](3);
 
         A[0][0] = 1;
         A[0][1] = 2;
@@ -67,10 +67,10 @@ contract MatrixMultiplicationTest is Test {
         A[2][2] = 9;
 
         // Allocate and initialize a 3x3 matrix B
-        int256[][] memory B = new int256[][](3);
-        B[0] = new int256[](3);
-        B[1] = new int256[](3);
-        B[2] = new int256[](3);
+        uint256[][] memory B = new uint256[][](3);
+        B[0] = new uint256[](3);
+        B[1] = new uint256[](3);
+        B[2] = new uint256[](3);
 
         B[0][0] = 9;
         B[0][1] = 8;
@@ -83,7 +83,7 @@ contract MatrixMultiplicationTest is Test {
         B[2][2] = 1;
 
         // Multiply matrices on-chain
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
         // Validate the result matrix C
         // First row of C
@@ -104,9 +104,9 @@ contract MatrixMultiplicationTest is Test {
 
     function testMatrixMultiply10x10() public view {
         // Allocate and initialize a 10x10 matrix A
-        int256[][] memory A = new int256[][](10);
+        uint256[][] memory A = new uint256[][](10);
         for (uint256 i = 0; i < 10; i++) {
-            A[i] = new int256[](10);
+            A[i] = new uint256[](10);
         }
 
         // Fill values for matrix A (arbitrary values for testing)
@@ -117,11 +117,11 @@ contract MatrixMultiplicationTest is Test {
         }
 
         // Allocate and initialize a 10x10 matrix B
-        int256[][] memory B = new int256[][](10);
+        uint256[][] memory B = new uint256[][](10);
 
         //Allocate each rvalues for matrix B (arbitrary values for testing)
         for (uint256 i = 0; i < 10; i++) {
-            B[i] = new int256[](10);
+            B[i] = new uint256[](10);
         }
         for (uint256 i = 0; i < 10; i++) {
             for (uint256 j = 0; j < 10; j++) {
@@ -130,7 +130,7 @@ contract MatrixMultiplicationTest is Test {
         }
 
         // Perform the multiplication
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
         // Validate the result matrix C
         for (uint256 i = 0; i < 10; i++) {
@@ -141,9 +141,9 @@ contract MatrixMultiplicationTest is Test {
     }
     function testMatrixMultiply50x50() view public {
         // Allocate and initialize a 50x50 matrix A
-        int256[][] memory A = new int256[][](50);
+        uint256[][] memory A = new uint256[][](50);
         for (uint256 i = 0; i < 50; i++) {
-            A[i] = new int256[](50);
+            A[i] = new uint256[](50);
         }
 
         // Fill values for matrix A (arbitrary values for testing)
@@ -154,11 +154,11 @@ contract MatrixMultiplicationTest is Test {
         }
 
         // Allocate and initialize a 150x50 matrix B
-        int256[][] memory B = new int256[][](50);
+        uint256[][] memory B = new uint256[][](50);
 
         //Allocate each rvalues for matrix B (arbitrary values for testing)
         for (uint256 i = 0; i < 50; i++) {
-            B[i] = new int256[](50);
+            B[i] = new uint256[](50);
         }
         for (uint256 i = 0; i < 50; i++) {
             for (uint256 j = 0; j < 50; j++) {
@@ -167,7 +167,7 @@ contract MatrixMultiplicationTest is Test {
         }
 
         // Perform the multiplication
-        int256[][] memory C = matrix.multiply(A, B);
+        uint256[][] memory C = matrix.multiply(A, B);
 
         // Validate the result matrix C
         for (uint256 i = 0; i < 10; i++) {
