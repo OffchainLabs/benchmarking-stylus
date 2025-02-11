@@ -20,14 +20,43 @@ if [ -z "$RPC_URL" ]; then
     exit 1
 fi
 
-# Deploy the MatrixMultiplication contract
+# Define the contract path
+CONTRACT_FILE=$(realpath ../src/MatrixMultiplicationHardcoded.sol)
+
+if [ ! -f "$CONTRACT_FILE" ]; then
+    echo "❌ Error: Contract file not found at expected path: $CONTRACT_FILE"
+    ls -lah ../src/
+    exit 1
+fi
+
+echo "🚀 Using contract: $CONTRACT_FILE"
+
+
+# Small delay to prevent race conditions
+sleep 1
+
+# Detect matrix size from function parameters (macOS-compatible)
+echo "🔍 Detecting matrix size from function parameters in $CONTRACT_FILE..."
+
+MATRIX_SIZE=$(grep -oE 'uint256\[[0-9]+\]\[[0-9]+\]' "$CONTRACT_FILE" | head -n 1 | grep -oE '[0-9]+' | tail -n 1)
+
+
+# If detection fails, set a default value
+if [ -z "$MATRIX_SIZE" ]; then
+    echo "⚠️ Warning: Could not detect matrix size, defaulting to 40."
+    MATRIX_SIZE=40
+fi
+
+echo "✅ Matrix size detected: ${MATRIX_SIZE}x${MATRIX_SIZE}"
+
+# Deploy the contract
 deploy_contract() {
     echo "🚀 Deploying MatrixMultiplication contract..."
 
     DEPLOY_OUTPUT=$(forge create \
         --rpc-url "$RPC_URL" \
         --private-key "$PRIVATE_KEY" \
-        src/MatrixMultiplication.sol:MatrixMultiplication \
+        "$CONTRACT_FILE:MatrixMultiplication" \
         --broadcast 2>&1)
 
     echo "$DEPLOY_OUTPUT"
@@ -47,53 +76,24 @@ deploy_contract() {
 ETH_FROM=$(cast wallet address --private-key "$PRIVATE_KEY")
 export ETH_FROM
 
-# Generate a random matrix of size NxN with values between 0 and 10
-generate_matrix() {
-    local size=$1
-    local matrix="["
-    for ((i=0; i<size; i++)); do
-        row="["
-        for ((j=0; j<size; j++)); do
-            rand_value=$((RANDOM % 11)) # Random number between 0-10
-            row+="$rand_value"
-            if [ "$j" -lt $((size - 1)) ]; then
-                row+=","
-            fi
-        done
-        row+="]"
-        matrix+="$row"
-        if [ "$i" -lt $((size - 1)) ]; then
-            matrix+=","
-        fi
-    done
-    matrix+="]"
-    echo "$matrix"
-}
-
 # Function to send the transaction
 send_matrix_transaction() {
-    local size=$1
-    echo "🚀 Sending transaction for ${size}x${size} matrix multiplication..."
-
-    # Generate two random matrices
-    MATRIX_A=$(generate_matrix "$size")
-    MATRIX_B=$(generate_matrix "$size")
+    echo "🚀 Sending transaction for ${MATRIX_SIZE}x${MATRIX_SIZE} matrix multiplication..."
 
     # Fetch current nonce dynamically
     NONCE=$(cast nonce "$ETH_FROM" --rpc-url "$RPC_URL")
-    
-    # Estimate gas limit (adjust based on actual contract needs)
-    GAS_LIMIT=500000000
 
-    # Send the transaction to call the multiply() function
+    # Estimate gas limit (adjust based on actual contract needs)
+    GAS_LIMIT=500000000000
+
+    # Send the transaction to call the multiply() function in the contract
     TX_HASH=$(cast send "$CONTRACT_ADDRESS" \
-        "multiply(uint256[][],uint256[][])" \
-        "$MATRIX_A" "$MATRIX_B" \
+        "multiply()" \
         --from "$ETH_FROM" --rpc-url "$RPC_URL" \
         --nonce "$NONCE" --gas-limit "$GAS_LIMIT" --private-key "$PRIVATE_KEY" 2>&1)
 
     if [[ "$TX_HASH" == *"out of gas"* ]]; then
-        echo "❌ Out of Gas for ${size}x${size} matrix multiplication!"
+        echo "❌ Out of Gas for ${MATRIX_SIZE}x${MATRIX_SIZE} matrix multiplication!"
     elif [[ "$TX_HASH" == *"Error"* ]]; then
         echo "❌ Failed: $TX_HASH"
     else
@@ -101,12 +101,8 @@ send_matrix_transaction() {
     fi
 }
 
-# Execute contract deployment
+# Execute contract deployment and function call
 deploy_contract
+send_matrix_transaction
 
-# Test matrix sizes: 10, 20, 30, 40, 50
-for SIZE in 10 20 30 40; do
-    send_matrix_transaction "$SIZE"
-done
-
-echo "✅ All matrix multiplications attempted!"
+echo "✅ All transactions attempted!"
