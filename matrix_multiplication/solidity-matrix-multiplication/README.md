@@ -7,13 +7,12 @@ This repository demonstrates matrix multiplication in Solidity, including compre
 
 Matrix multiplication is a computationally intensive operation, especially on-chain. This project includes:
 
-- MatrixMultiplication.sol → Accepts dynamic matrix input for flexible testing up to 30×30. Larger matrix sizes (e.g., 40×40 and beyond) exceed gas limits and cannot be executed on-chain due to the cubic growth of gas costs.
+    - MatrixMultiplication.sol → Accepts dynamic matrix input for flexible testing up to 30×30. Larger matrix sizes (e.g., 40×40 and beyond) exceed gas limits and cannot be executed on-chain due to the cubic growth of gas costs.
 
 2. Foundry tests for local and on-chain validation.
 
-3. Transaction sender scripts:
+3. Transaction sender script:
     - `matrix_tx_sender.sh` → Sends matrix multiplication transactions (10×10 to 40×40).
-    - `matrix_hardcoded.sh` → Detects and runs multiplication **any hardcoded matrix size** from the contract.
 
 ## Prerequisites
 
