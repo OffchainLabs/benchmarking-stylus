@@ -5,9 +5,9 @@ This repository demonstrates matrix multiplication in Solidity, including compre
 
 ## Overview
 
-Matrix multiplication is a computationally intensive operation, especially on-chain. This project includes:
+1. Matrix multiplication is a computationally intensive operation, especially on-chain. This project includes:
 
-    - MatrixMultiplication.sol → Accepts dynamic matrix input for flexible testing up to 30×30. Larger matrix sizes (e.g., 40×40 and beyond) exceed gas limits and cannot be executed on-chain due to the cubic growth of gas costs.
+    - `MatrixMultiplication.sol` → Accepts dynamic matrix input for flexible testing up to 30×30. Larger matrix sizes (e.g., 40×40 and beyond) exceed gas limits and cannot be executed on-chain due to the cubic growth of gas costs.
 
 2. Foundry tests for local and on-chain validation.
 
