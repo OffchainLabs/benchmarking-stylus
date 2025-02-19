@@ -1,97 +1,69 @@
-// #![cfg_attr(not(feature = "export-abi"), no_main)]
-// extern crate alloc;
-
-// use alloc::vec::Vec;
-// use stylus_sdk::prelude::*;
-
-// sol_storage! {
-//     #[entrypoint]
-//     pub struct MatrixMultiplication {}
-// }
-
-// #[public]
-// impl MatrixMultiplication {
-//     /// Multiplies two square matrices of size `n x n`
-//     pub fn multiply(a: Vec<Vec<i64>>, b: Vec<Vec<i64>>) -> Vec<Vec<i64>> {
-//         let n = a.len();
-
-//         // Ensure valid square matrix dimensions
-//         assert!(n > 0 && b.len() == n && b[0].len() == n, "Invalid matrix dimensions");
-
-//         // Initialize output matrix
-//         let mut c: Vec<Vec<i64>> = vec![vec![0; n]; n];
-
-//         // Perform matrix multiplication
-//         for i in 0..n {
-//             for j in 0..n {
-//                 for k in 0..n {
-//                     c[i][j] += a[i][k] * b[k][j];
-//                 }
-//             }
-//         }
-
-//         c
-//     }
-// }
-
-
-
 #![cfg_attr(not(feature = "export-abi"), no_main)]
 extern crate alloc;
 
 use alloc::vec::Vec;
 use stylus_sdk::prelude::*;
 
+const M: u64 = 2u64.pow(31);
+const A: u64 = 1103515245;
+const C: u64 = 12345;
+
 sol_storage! {
     #[entrypoint]
     pub struct MatrixMultiplication {}
 }
 
+// PRNG (Linear Congruential Generator)
+struct Rng {
+    seed: u64,
+}
+
+impl Rng {
+    fn new(seed: u64) -> Self {
+        Self { seed }
+    }
+
+    fn next(&mut self) -> u64 {
+        self.seed = (A.wrapping_mul(self.seed).wrapping_add(C)) % M;
+        self.seed
+    }
+}
+
 #[public]
 impl MatrixMultiplication {
-    /// Multiplies two square matrices of size `50 x 50` (hardcoded)
-    pub fn multiply() -> Vec<Vec<i64>> {
-        // Hardcoded 50x50 matrices
-        let a: Vec<Vec<i64>> = vec![
-            vec![7, 9, 6, 5, 6, 7, 4, 8, 9, 4, 4, 8, 1, 9, 3, 7, 7, 5, 4, 7, 3, 9, 1, 0, 8, 9, 6, 7, 5, 8, 8, 1, 7, 3, 4, 0, 5, 7, 1, 4, 7, 1, 9, 3, 1, 0, 2, 5, 8, 7],
-            vec![2, 4, 6, 0, 0, 8, 3, 7, 5, 1, 2, 7, 3, 9, 1, 4, 2, 6, 8, 3, 6, 2, 8, 4, 5, 3, 8, 3, 0, 2, 3, 8, 5, 8, 5, 1, 9, 9, 0, 1, 4, 3, 2, 7, 9, 3, 7, 8, 6, 7],
-            vec![4, 0, 5, 9, 8, 8, 9, 0, 9, 1, 3, 6, 7, 9, 8, 8, 6, 7, 7, 0, 8, 6, 8, 8, 3, 6, 0, 6, 2, 1, 7, 8, 6, 5, 1, 7, 2, 3, 3, 2, 1, 5, 2, 9, 0, 7, 3, 7, 8, 6],
-            vec![5, 5, 4, 1, 5, 4, 8, 1, 8, 1, 1, 2, 3, 6, 9, 2, 1, 4, 0, 9, 5, 6, 3, 9, 1, 2, 9, 6, 2, 4, 0, 0, 2, 5, 9, 7, 0, 5, 4, 7, 1, 8, 2, 0, 7, 9, 1, 7, 9, 3],
-            vec![2, 5, 3, 1, 7, 8, 0, 5, 1, 3, 0, 5, 8, 6, 0, 9, 0, 2, 1, 4, 0, 0, 7, 9, 6, 2, 1, 1, 2, 6, 3, 1, 5, 8, 2, 9, 5, 3, 6, 5, 0, 4, 9, 2, 1, 7, 3, 3, 5, 0],
-            vec![2, 5, 4, 0, 9, 3, 8, 9, 7, 7, 1, 4, 7, 9, 1, 4, 7, 3, 5, 0, 5, 7, 1, 7, 2, 3, 7, 6, 7, 8, 8, 9, 0, 8, 2, 5, 8, 2, 0, 0, 4, 4, 9, 8, 8, 9, 6, 1, 8, 2],
-            vec![1, 3, 3, 6, 0, 7, 3, 2, 5, 9, 8, 5, 6, 4, 3, 8, 5, 9, 9, 5, 4, 5, 6, 4, 8, 1, 8, 7, 0, 6, 5, 1, 9, 9, 3, 4, 8, 7, 6, 3, 6, 3, 5, 5, 6, 9, 7, 8, 4, 5],
-            vec![4, 9, 1, 9, 3, 9, 1, 8, 5, 1, 8, 4, 9, 8, 9, 1, 7, 5, 6, 5, 8, 1, 2, 9, 2, 4, 0, 8, 3, 8, 8, 9, 7, 7, 4, 5, 6, 1, 9, 1, 4, 6, 7, 7, 0, 1, 1, 8, 8, 2],
-            vec![8, 8, 7, 6, 0, 8, 3, 6, 3, 8, 3, 0, 1, 2, 9, 4, 4, 1, 8, 3, 8, 7, 4, 1, 7, 2, 0, 5, 3, 0, 4, 4, 1, 3, 9, 4, 1, 5, 8, 4, 8, 6, 7, 6, 2, 9, 5, 0, 8, 6],
-            // Repeat for the remaining rows until the 50th row...
-        ];
-    
-        let b: Vec<Vec<i64>> = vec![
-            vec![7, 9, 6, 5, 6, 7, 4, 8, 9, 4, 4, 8, 1, 9, 3, 7, 7, 5, 4, 7, 3, 9, 1, 0, 8, 9, 6, 7, 5, 8, 8, 1, 7, 3, 4, 0, 5, 7, 1, 4, 7, 1, 9, 3, 1, 0, 2, 5, 8, 7],
-            vec![2, 4, 6, 0, 0, 8, 3, 7, 5, 1, 2, 7, 3, 9, 1, 4, 2, 6, 8, 3, 6, 2, 8, 4, 5, 3, 8, 3, 0, 2, 3, 8, 5, 8, 5, 1, 9, 9, 0, 1, 4, 3, 2, 7, 9, 3, 7, 8, 6, 7],
-            vec![4, 0, 5, 9, 8, 8, 9, 0, 9, 1, 3, 6, 7, 9, 8, 8, 6, 7, 7, 0, 8, 6, 8, 8, 3, 6, 0, 6, 2, 1, 7, 8, 6, 5, 1, 7, 2, 3, 3, 2, 1, 5, 2, 9, 0, 7, 3, 7, 8, 6],
-            vec![5, 5, 4, 1, 5, 4, 8, 1, 8, 1, 1, 2, 3, 6, 9, 2, 1, 4, 0, 9, 5, 6, 3, 9, 1, 2, 9, 6, 2, 4, 0, 0, 2, 5, 9, 7, 0, 5, 4, 7, 1, 8, 2, 0, 7, 9, 1, 7, 9, 3],
-            vec![2, 5, 3, 1, 7, 8, 0, 5, 1, 3, 0, 5, 8, 6, 0, 9, 0, 2, 1, 4, 0, 0, 7, 9, 6, 2, 1, 1, 2, 6, 3, 1, 5, 8, 2, 9, 5, 3, 6, 5, 0, 4, 9, 2, 1, 7, 3, 3, 5, 0],
-            vec![2, 5, 4, 0, 9, 3, 8, 9, 7, 7, 1, 4, 7, 9, 1, 4, 7, 3, 5, 0, 5, 7, 1, 7, 2, 3, 7, 6, 7, 8, 8, 9, 0, 8, 2, 5, 8, 2, 0, 0, 4, 4, 9, 8, 8, 9, 6, 1, 8, 2],
-            vec![1, 3, 3, 6, 0, 7, 3, 2, 5, 9, 8, 5, 6, 4, 3, 8, 5, 9, 9, 5, 4, 5, 6, 4, 8, 1, 8, 7, 0, 6, 5, 1, 9, 9, 3, 4, 8, 7, 6, 3, 6, 3, 5, 5, 6, 9, 7, 8, 4, 5],
-            vec![4, 9, 1, 9, 3, 9, 1, 8, 5, 1, 8, 4, 9, 8, 9, 1, 7, 5, 6, 5, 8, 1, 2, 9, 2, 4, 0, 8, 3, 8, 8, 9, 7, 7, 4, 5, 6, 1, 9, 1, 4, 6, 7, 7, 0, 1, 1, 8, 8, 2],
-            vec![8, 8, 7, 6, 0, 8, 3, 6, 3, 8, 3, 0, 1, 2, 9, 4, 4, 1, 8, 3, 8, 7, 4, 1, 7, 2, 0, 5, 3, 0, 4, 4, 1, 3, 9, 4, 1, 5, 8, 4, 8, 6, 7, 6, 2, 9, 5, 0, 8, 6],
-            // Repeat for the remaining rows until the 50th row...
-        ];
-    
-    
-        // Initialize output matrix
-        let n = a.len();
-        let mut c: Vec<Vec<i64>> = vec![vec![0; n]; n];
-    
-        // Perform matrix multiplication
-        for i in 0..n {
-            for j in 0..n {
-                for k in 0..n {
+    /// Generates an `n x n` matrix using a PRNG
+    fn generate_matrix(seed: u64, n: u32) -> Vec<Vec<i64>> {
+        let n_usize = n as usize; // Convert `u32` to `usize` for indexing
+        let mut rng = Rng::new(seed);
+        let mut matrix = Vec::with_capacity(n_usize);
+
+        for _ in 0..n_usize {
+            let mut row = Vec::with_capacity(n_usize);
+            for _ in 0..n_usize {
+                row.push((rng.next() % 100) as i64); // Random numbers in range [0, 99]
+            }
+            matrix.push(row);
+        }
+
+        matrix
+    }
+
+    /// Multiplies two `n x n` matrices
+    pub fn multiply(n: u32, seed_a: u64, seed_b: u64) -> Vec<Vec<i64>> {
+        let a = Self::generate_matrix(seed_a, n);
+        let b = Self::generate_matrix(seed_b, n);
+        
+        let n_usize = n as usize; // Convert `u32` to `usize` for indexing
+        let mut c: Vec<Vec<i64>> = vec![vec![0; n_usize]; n_usize];
+
+        for i in 0..n_usize {
+            for j in 0..n_usize {
+                for k in 0..n_usize {
                     c[i][j] += a[i][k] * b[k][j];
                 }
             }
         }
-    
+
         c
     }
 }
