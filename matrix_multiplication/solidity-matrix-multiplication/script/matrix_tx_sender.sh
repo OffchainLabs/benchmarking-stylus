@@ -47,48 +47,41 @@ deploy_contract() {
 ETH_FROM=$(cast wallet address --private-key "$PRIVATE_KEY")
 export ETH_FROM
 
-# Generate a random matrix of size NxN with values between 0 and 10
-generate_matrix() {
-    local size=$1
-    local matrix="["
-    for ((i=0; i<size; i++)); do
-        row="["
-        for ((j=0; j<size; j++)); do
-            rand_value=$((RANDOM % 11)) # Random number between 0-10
-            row+="$rand_value"
-            if [ "$j" -lt $((size - 1)) ]; then
-                row+=","
-            fi
-        done
-        row+="]"
-        matrix+="$row"
-        if [ "$i" -lt $((size - 1)) ]; then
-            matrix+=","
-        fi
-    done
-    matrix+="]"
-    echo "$matrix"
+# Function to generate a random 256-bit seed
+generate_seed() {
+    echo $(( RANDOM * RANDOM * RANDOM * RANDOM )) # Generates a pseudo-random large number
 }
 
-# Function to send the transaction
+# Function to send the transaction with PRNG-based matrix generation
 send_matrix_transaction() {
     local size=$1
     echo "🚀 Sending transaction for ${size}x${size} matrix multiplication..."
 
-    # Generate two random matrices
-    MATRIX_A=$(generate_matrix "$size")
-    MATRIX_B=$(generate_matrix "$size")
+    # Generate two random seeds
+    SEED_A=$(generate_seed)
+    SEED_B=$(generate_seed)
 
     # Fetch current nonce dynamically
     NONCE=$(cast nonce "$ETH_FROM" --rpc-url "$RPC_URL")
-    
-    # Estimate gas limit (adjust based on actual contract needs)
-    GAS_LIMIT=500000000
+
+    # Adjust gas limit dynamically based on matrix size
+    if [ "$size" -le 10 ]; then
+        GAS_LIMIT=5000000
+    elif [ "$size" -le 20 ]; then
+        GAS_LIMIT=15000000  # Increased for 20x20
+    elif [ "$size" -le 30 ]; then
+        GAS_LIMIT=25000000  # Increased for 30x30
+    elif [ "$size" -le 40 ]; then
+        GAS_LIMIT=32000000  # Max block gas limit
+    else
+        echo "❌ Matrix size too large for on-chain computation!"
+        return
+    fi
 
     # Send the transaction to call the multiply() function
     TX_HASH=$(cast send "$CONTRACT_ADDRESS" \
-        "multiply(uint256[][],uint256[][])" \
-        "$MATRIX_A" "$MATRIX_B" \
+        "multiply(uint256,uint256,uint256)" \
+        "$size" "$SEED_A" "$SEED_B" \
         --from "$ETH_FROM" --rpc-url "$RPC_URL" \
         --nonce "$NONCE" --gas-limit "$GAS_LIMIT" --private-key "$PRIVATE_KEY" 2>&1)
 
@@ -101,10 +94,11 @@ send_matrix_transaction() {
     fi
 }
 
+
 # Execute contract deployment
 deploy_contract
 
-# Test matrix sizes: 10, 20, 30, 40, 50
+# Test matrix sizes: 10, 20, 30, 40
 for SIZE in 10 20 30 40; do
     send_matrix_transaction "$SIZE"
 done

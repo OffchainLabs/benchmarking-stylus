@@ -7,12 +7,12 @@ This repository demonstrates matrix multiplication in Solidity, including compre
 
 1. Matrix multiplication is a computationally intensive operation, especially on-chain. This project includes:
 
-    - `MatrixMultiplication.sol` → Accepts dynamic matrix input for flexible testing up to 30×30. Larger matrix sizes (e.g., 40×40 and beyond) exceed gas limits and cannot be executed on-chain due to the cubic growth of gas costs.
+    - `MatrixMultiplication.sol` →  Implements matrix multiplication using pseudo-random number generation (PRNG) to generate test matrices dynamically. The contract accepts a matrix size n and two seed values to generate matrices up to 40×40. Larger sizes exceed gas limits and cannot be executed on-chain due to cubic gas cost growth.
 
 2. Foundry tests for local and on-chain validation.
 
 3. Transaction sender script:
-    - `matrix_tx_sender.sh` → Deploys the contract and sends matrix multiplication transactions (10×10 to 30×30).
+    - `matrix_tx_sender.sh` → Deploys the contract and sends matrix multiplication transactions (10×10 to 40x40).
 
 ## Prerequisites
 
@@ -56,7 +56,7 @@ These tests simulate matrix operations without EVM constraints, enabling the val
     RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
 ```
 
-3. Run the Script for `10×10` to `30×30` Multiplication: This script deploys the contract and sends transactions for matrix sizes 10×10 to 30×30 dynamically.
+3. Run the Script for `10×10` to `40×40` Multiplication: This script deploys the contract and sends transactions for matrix sizes `10×10` to `40×40` dynamically, using PRNG to generate input matrices.
 
 ```bash
     cd script
