@@ -10,10 +10,32 @@ else
 fi
 
 # Ensure necessary environment variables are set
-if [ -z "$PRIVATE_KEY" ] || [ -z "$SEPOLIA_RPC" ] || [ -z "$CONTRACT_ADDRESS" ]; then
+if [ -z "$PRIVATE_KEY" ] || [ -z "$SEPOLIA_RPC" ]; then
     echo "❌ Error: Missing required environment variables!"
     exit 1
 fi
+
+
+# Move to the root directory before running the deployment
+cd "$(dirname "$0")/.." || exit 1
+
+# Deploy the contract and retrieve the deployed address
+DEPLOY_OUTPUT=$(cargo stylus deploy --endpoint "$SEPOLIA_RPC" --private-key "$PRIVATE_KEY" 2>&1)
+if [[ "$DEPLOY_OUTPUT" == *"Error"* ]]; then
+    echo "❌ Contract deployment failed!"
+    echo "$DEPLOY_OUTPUT"
+    exit 1
+fi
+
+# Extract contract address from deployment output
+CONTRACT_ADDRESS=$(echo "$DEPLOY_OUTPUT" | grep -oE '0x[a-fA-F0-9]{40}' | head -n 1)
+if [ -z "$CONTRACT_ADDRESS" ]; then
+    echo "❌ Failed to extract contract address!"
+    exit 1
+fi
+
+echo "✅ Contract deployed at: $CONTRACT_ADDRESS"
+export CONTRACT_ADDRESS
 
 # Fetch Ethereum address from private key
 ETH_FROM=$(cast wallet address --private-key "$PRIVATE_KEY")
