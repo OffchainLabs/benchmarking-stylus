@@ -10,6 +10,7 @@ This folder contains the Stylus implementation of matrix multiplication, optimiz
 
 2. Transaction sender script:
    - `matrix_tx_sender.sh` → This script deploys the contract, caches it to decrease transaction costs, and sends matrix multiplication transactions (10×10 to 40x40).
+   
 ## Prerequisites
 
 1. **Foundry Installation**: Install Foundry by following the [Foundry installation guide](https://book.getfoundry.sh/getting-started/installation.html).

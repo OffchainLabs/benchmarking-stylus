@@ -9,7 +9,7 @@ use dotenv::dotenv;
 use eyre::Result;
 use rand::Rng;
 use std::{env, str::FromStr, sync::Arc};
-use crate::util::inner_u64;
+
 
 const PRIV_KEY: &str = "PRIV_KEY";
 const RPC_URL: &str = "RPC_URL";
