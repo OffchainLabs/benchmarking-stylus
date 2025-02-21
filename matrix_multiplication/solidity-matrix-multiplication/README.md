@@ -11,7 +11,7 @@ This folder contains matrix multiplication in Solidity, including comprehensive 
 2. Foundry tests for local and on-chain validation.
 
 3. Transaction sender script:
-   - `matrix_tx_sender.sh` → Deploys the contract and sends matrix multiplication transactions (10×10 to 40x40).
+   - `matrix_tx_sender.sh` → This script deploys the contract and sends matrix multiplication transactions (10×10 to 40x40).
 
 ## Prerequisites
 
@@ -44,17 +44,17 @@ These tests simulate matrix operations without EVM constraints, enabling the val
 
 ## On-Chain Testing on Arbitrum Sepolia:
 
-1. Ensure the contract is compiled before deploying:
+1. Copy the example env file:
 
 ```bash
-    forge build
+    cp .env.example .env
 ```
 
-2. Ensure the `.env` file exists in the root directory with:
+Then, open `.env `and fill in the required fields:
 
 ```bash
-    PRIVATE_KEY=0xYourPrivateKeyHere
     RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+    PRIVATE_KEY=0xYourPrivateKeyHere
 ```
 
 3. Run the Script for `10×10` to `40×40` Multiplication: This script deploys the contract and sends transactions for matrix sizes `10×10` to `40×40` dynamically, using PRNG to generate input matrices.

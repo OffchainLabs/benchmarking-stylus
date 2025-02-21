@@ -9,8 +9,7 @@ This folder contains the Stylus implementation of matrix multiplication, optimiz
    - `lib.rs` → Implements matrix multiplication using a pseudo-random number generator (PRNG) for matrix generation.
 
 2. Transaction sender script:
-   - `matrix_tx_sender.sh` → Sends matrix multiplication transactions (10×10 to 40x40), note that the script requires manual contract deployment before execution.
-
+   - `matrix_tx_sender.sh` → This script deploys the contract, caches it to decrease transaction costs, and sends matrix multiplication transactions (10×10 to 40x40).
 ## Prerequisites
 
 1. **Foundry Installation**: Install Foundry by following the [Foundry installation guide](https://book.getfoundry.sh/getting-started/installation.html).
@@ -36,34 +35,11 @@ Then, open `.env `and fill in the required fields:
 ```bash
     RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
     PRIVATE_KEY=0xYourPrivateKeyHere
-    STYLUS_CONTRACT_ADDRESS= # Leave empty until deployment
 ```
 
-2. Deploy the contract: Before running transactions, manually deploy the contract:
-
-```bash
-    cargo stylus deploy \
-        --endpoint "$RPC_URL" \
-        --private-key "$PRIVATE_KEY"
-```
-
-Once deployment is complete, copy the contract address from the output and update `.env`.
-
-3. Cache the contract: In order to cache the contract after deployment, run:
-
-```bash
-  cargo stylus cache bid \
-    --private-key="$PRIVATE_KEY" \
-    --endpoint="$RPC_URL" \
-    $STYLUS_CONTRACT_ADDRESS 0
-
-```
-
-4. Run the Script for `10×10` to `40×40` Multiplication: Once the contract is deployed and cached, run the script:
+3. Run the Script for `10×10` to `40×40` Multiplication: This script deploys the contract and sends transactions for matrix sizes `10×10` to `40×40` dynamically, using PRNG to generate input matrices.
 
 ```bash
     cd script
     bash matrix_tx_sender.sh
 ```
-
-This script sends transactions for matrix sizes `10×10` to `40×40` dynamically, using PRNG to generate input matrices.
